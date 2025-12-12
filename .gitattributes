@@ -1,0 +1,14 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Exclude from distribution packages (composer install)
+/.github export-ignore
+/docs export-ignore
+/tests export-ignore
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/phpunit.xml export-ignore
+/phpunit.xml.dist export-ignore
+/phpstan.neon export-ignore
+/.php-cs-fixer.php export-ignore
