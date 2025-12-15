@@ -1,0 +1,67 @@
+{% import '_includes/forms.twig' as forms %}
+
+{{ forms.lightswitchField({
+    label: 'Enable reCAPTCHA'|t('recaptcha'),
+    instructions: 'Enable reCAPTCHA v3 verification for forms.'|t('recaptcha'),
+    id: 'enabled',
+    name: 'enabled',
+    on: settings.enabled,
+}) }}
+
+<hr>
+
+{{ forms.autosuggestField({
+    label: 'Site Key'|t('recaptcha'),
+    instructions: 'Enter your Google reCAPTCHA v3 site key. You can get one from the [reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin).'|t('recaptcha')|md,
+    id: 'siteKey',
+    name: 'siteKey',
+    value: settings.siteKey,
+    suggestEnvVars: true,
+    required: true,
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Secret Key'|t('recaptcha'),
+    instructions: 'Enter your Google reCAPTCHA v3 secret key.'|t('recaptcha'),
+    id: 'secretKey',
+    name: 'secretKey',
+    value: settings.secretKey,
+    suggestEnvVars: true,
+    required: true,
+}) }}
+
+<hr>
+
+{{ forms.textField({
+    label: 'Score Threshold'|t('recaptcha'),
+    instructions: 'Minimum score required to pass verification (0.0 to 1.0). Lower values are more permissive. Default is 0.5.'|t('recaptcha'),
+    id: 'threshold',
+    name: 'threshold',
+    value: settings.threshold,
+    type: 'number',
+    min: 0,
+    max: 1,
+    step: 0.1,
+    size: 5,
+}) }}
+
+<hr>
+
+<div class="readable">
+    <h2>{{ 'Usage'|t('recaptcha') }}</h2>
+
+    <h3>{{ 'In your Twig templates'|t('recaptcha') }}</h3>
+
+    <p>{{ 'Add the reCAPTCHA script to your page head or before the closing body tag:'|t('recaptcha') }}</p>
+
+    <pre><code>{{ '{{ craft.recaptcha.script() }}' }}</code></pre>
+
+    <p>{{ 'Add the hidden input and execute script inside your form:'|t('recaptcha') }}</p>
+
+    <pre><code>{{ '{{ craft.recaptcha.input(\'contact\') }}
+{{ craft.recaptcha.execute(\'contact\') }}' }}</code></pre>
+
+    <h3>{{ 'Contact Form Integration'|t('recaptcha') }}</h3>
+
+    <p>{{ 'This plugin automatically integrates with the Contact Form plugin. Just add the reCAPTCHA script and execution code to your contact form template.'|t('recaptcha') }}</p>
+</div>
