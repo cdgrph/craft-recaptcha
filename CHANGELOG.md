@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-01-14
+
+### Fixed
+- Fix `grecaptcha is not defined` error when reCAPTCHA script loads asynchronously
+- Add retry mechanism to wait for grecaptcha object before calling `grecaptcha.ready()`
+- Prevent duplicate form submissions with `isExecuting` flag
+- Skip reCAPTCHA execution if token already exists in form
+- Add error handling for reCAPTCHA execution failures
+- Use `requestSubmit()` for better form validation support with fallback to `submit()`
+- Add `DOMContentLoaded` check for proper initialization timing
+
 ## [1.0.0] - 2025-12-15
 
 ### Fixed

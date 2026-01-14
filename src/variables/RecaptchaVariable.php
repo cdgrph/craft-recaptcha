@@ -84,25 +84,75 @@ class RecaptchaVariable
 
         $script = <<<JS
 <script>
-grecaptcha.ready(function() {
-    var form = document.querySelector('{$escapedSelector}') || document.querySelector('form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            grecaptcha.execute('{$siteKey}', {action: '{$escapedAction}'}).then(function(token) {
-                var input = form.querySelector('#g-recaptcha-response') || document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'g-recaptcha-response';
-                input.id = 'g-recaptcha-response';
-                input.value = token;
-                if (!form.contains(input)) {
-                    form.appendChild(input);
-                }
-                form.submit();
-            });
+(function() {
+    function initRecaptcha() {
+        if (typeof grecaptcha === 'undefined' || !grecaptcha.ready) {
+            setTimeout(initRecaptcha, 100);
+            return;
+        }
+
+        grecaptcha.ready(function() {
+            var form = document.querySelector('{$escapedSelector}') || document.querySelector('form');
+            if (form) {
+                var isExecuting = false;
+
+                var handler = function(e) {
+                    // Check if token already exists in the form
+                    var existingToken = form.querySelector('#g-recaptcha-response');
+                    if (existingToken && existingToken.value && existingToken.value.length > 0) {
+                        // Token already exists, let form submit naturally
+                        return true;
+                    }
+
+                    // Check if already executing reCAPTCHA
+                    if (isExecuting) {
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    // No token yet, prevent submission and get one
+                    e.preventDefault();
+                    isExecuting = true;
+
+                    grecaptcha.execute('{$siteKey}', {action: '{$escapedAction}'}).then(function(token) {
+                        var input = form.querySelector('#g-recaptcha-response') || document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'g-recaptcha-response';
+                        input.id = 'g-recaptcha-response';
+                        input.value = token;
+                        if (!form.contains(input)) {
+                            form.appendChild(input);
+                        }
+
+                        // Reset flag after token is set
+                        isExecuting = false;
+
+                        // Wait a bit to ensure token is fully set before resubmitting
+                        setTimeout(function() {
+                            // Use requestSubmit() if available (modern browsers), fallback to submit()
+                            if (typeof form.requestSubmit === 'function') {
+                                form.requestSubmit();
+                            } else {
+                                form.submit();
+                            }
+                        }, 50);
+                    }).catch(function(error) {
+                        isExecuting = false;
+                        console.error('reCAPTCHA execution failed:', error);
+                    });
+                };
+
+                form.addEventListener('submit', handler);
+            }
         });
     }
-});
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initRecaptcha);
+    } else {
+        initRecaptcha();
+    }
+})();
 </script>
 JS;
 
