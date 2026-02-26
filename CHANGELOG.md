@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Add `readyClass` option to `execute()` for multi-step form support
   - When specified, reCAPTCHA only executes when the form has the given CSS class
   - Other form submissions (e.g., preview/confirm steps) pass through uninterrupted
+  - Also checks `e.defaultPrevented` to avoid conflicts with other submit handlers
   - Backward compatible: existing usage without options works unchanged
 
 ## [1.1.0] - 2026-01-14

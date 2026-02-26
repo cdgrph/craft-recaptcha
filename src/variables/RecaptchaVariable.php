@@ -88,7 +88,7 @@ class RecaptchaVariable
         $readyClass = isset($options['readyClass']) ? htmlspecialchars($options['readyClass'], ENT_QUOTES, 'UTF-8') : '';
 
         $readyClassCheck = $readyClass
-            ? "\n                    // Skip reCAPTCHA if form is not in the ready state\n                    if (!form.classList.contains('{$readyClass}')) {\n                        return;\n                    }\n"
+            ? "\n                    // Skip if form is not in the ready state or another handler already handled this event\n                    if (!form.classList.contains('{$readyClass}') || e.defaultPrevented) {\n                        return;\n                    }\n"
             : '';
 
         $script = <<<JS
