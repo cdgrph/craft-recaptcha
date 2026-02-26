@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-02-26
+
+### Added
+- Add `readyClass` option to `execute()` for multi-step form support
+  - When specified, reCAPTCHA only executes when the form has the given CSS class
+  - Other form submissions (e.g., preview/confirm steps) pass through uninterrupted
+  - Backward compatible: existing usage without options works unchanged
+
 ## [1.1.0] - 2026-01-14
 
 ### Fixed

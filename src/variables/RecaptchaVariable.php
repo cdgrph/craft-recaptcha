@@ -71,8 +71,12 @@ class RecaptchaVariable
      *
      * @param string $action The action name
      * @param string $formSelector CSS selector for the form (optional)
+     * @param array $options Optional settings:
+     *   - readyClass: Only execute reCAPTCHA when the form has this CSS class.
+     *                 Useful for multi-step forms where reCAPTCHA should only
+     *                 run on the final submission step.
      */
-    public function execute(string $action = 'submit', string $formSelector = ''): Markup
+    public function execute(string $action = 'submit', string $formSelector = '', array $options = []): Markup
     {
         if (!$this->getIsEnabled()) {
             return Template::raw('');
@@ -81,6 +85,11 @@ class RecaptchaVariable
         $siteKey = $this->getSiteKey();
         $escapedAction = htmlspecialchars($action, ENT_QUOTES, 'UTF-8');
         $escapedSelector = htmlspecialchars($formSelector, ENT_QUOTES, 'UTF-8');
+        $readyClass = isset($options['readyClass']) ? htmlspecialchars($options['readyClass'], ENT_QUOTES, 'UTF-8') : '';
+
+        $readyClassCheck = $readyClass
+            ? "\n                    // Skip reCAPTCHA if form is not in the ready state\n                    if (!form.classList.contains('{$readyClass}')) {\n                        return;\n                    }\n"
+            : '';
 
         $script = <<<JS
 <script>
@@ -96,7 +105,7 @@ class RecaptchaVariable
             if (form) {
                 var isExecuting = false;
 
-                var handler = function(e) {
+                var handler = function(e) {{$readyClassCheck}
                     // Check if token already exists in the form
                     var existingToken = form.querySelector('#g-recaptcha-response');
                     if (existingToken && existingToken.value && existingToken.value.length > 0) {
