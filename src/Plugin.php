@@ -82,6 +82,14 @@ class Plugin extends BasePlugin
                     return;
                 }
 
+                // Skip reCAPTCHA validation if disableRecaptcha flag is set in the message
+                $message = $event->submission->message ?? [];
+                if (is_array($message) && isset($message['disableRecaptcha'])) {
+                    if (filter_var($message['disableRecaptcha'], FILTER_VALIDATE_BOOLEAN)) {
+                        return;
+                    }
+                }
+
                 $token = Craft::$app->getRequest()->getBodyParam('g-recaptcha-response');
 
                 if (!$token) {
